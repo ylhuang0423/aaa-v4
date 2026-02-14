@@ -3,6 +3,9 @@
 @theme {
   --font-sans: 'Microsoft JhengHei', 'PingFang TC', system-ui, sans-serif;
 
+  --color-primary: var(--color-blue-600);
+  --color-secondary: var(--color-blue-100);
+  --color-muted: var(--color-zinc-400);
   --color-info: var(--color-blue-500);
   --color-success: var(--color-emerald-500);
   --color-warning: var(--color-yellow-500);

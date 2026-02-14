@@ -33,19 +33,15 @@ src/
 
 ## 開發慣例
 
-- 禁止相對引入，強制 `@/*` 絕對路徑（renderer 區域）
-- `import type` 強制分離
-- import 按 builtin → external → internal 字母排序
-- 元件：`export default function`，props 行內宣告
-- 樣式：Tailwind utility + `twMerge()` 動態 class
+- React 元件與 Tailwind 開發細則見 `.claude/skills/frontend/SKILL.md`
 - Commit message：英文
 - 文件：中文（專有名詞保留英文）
 - package.json 不設定 version
 
 ## 相關文件
 
-| 檔案              | Git | 用途                |
-| ----------------- | --- | ------------------- |
-| `NOTE.md`         | ✓   | aaa3 分析、照片結構 |
-| `NOTE.local.md`   | ✗   | 訪談紀錄、待辦事項  |
-| `CLAUDE.local.md` | ✗   | 本機外部參考路徑    |
+| 檔案              | Git | 用途                                      |
+| ----------------- | --- | ----------------------------------------- |
+| `NOTE.md`         | ✓   | aaa3 資料模型與 mutations、照片資料夾結構 |
+| `NOTE.local.md`   | ✗   | 用戶訪談紀錄、功能決策、待辦事項          |
+| `CLAUDE.local.md` | ✗   | 本機外部參考路徑                          |
