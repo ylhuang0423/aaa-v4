@@ -1,25 +1,32 @@
-import { useEffect, useRef } from 'react';
-import { useLocation } from 'react-router';
+import { useEffect } from 'react';
+import { useLocation, useNavigationType } from 'react-router';
 
-const scrollPositions: Record<string, number> = {};
+let savedScrollY = 0;
+
+/** Call before navigating away from a page whose scroll position should be restorable. */
+export function saveScrollPosition(): void {
+  savedScrollY = window.scrollY;
+}
 
 export default function useScrollRestore(): void {
-  const { pathname } = useLocation();
-  const prevPathRef = useRef(pathname);
+  const location = useLocation();
+  const navigationType = useNavigationType();
 
   useEffect(() => {
-    // Save previous route's scroll position
-    if (prevPathRef.current !== pathname) {
-      scrollPositions[prevPathRef.current] = window.scrollY;
-      prevPathRef.current = pathname;
+    // POP (back/forward): let the browser handle scroll restoration natively.
+    if (navigationType === 'POP') return;
+
+    // PUSH with restoreScroll state: restore the saved position.
+    if ((location.state as { restoreScroll?: boolean })?.restoreScroll) {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          window.scrollTo(0, savedScrollY);
+        });
+      });
+      return;
     }
 
-    // Restore scroll position for current route
-    const saved = scrollPositions[pathname];
-    if (saved !== undefined) {
-      window.scrollTo(0, saved);
-    } else {
-      window.scrollTo(0, 0);
-    }
-  }, [pathname]);
+    // All other PUSH navigations: scroll to top (SPA doesn't do this natively).
+    window.scrollTo(0, 0);
+  }, [location.pathname, location.state, navigationType]);
 }

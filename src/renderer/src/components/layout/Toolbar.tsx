@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router';
 
 export default function Toolbar({
   query,
@@ -17,6 +18,7 @@ export default function Toolbar({
   onColumnsChange: (columns: number) => void;
   showColumnSlider: boolean;
 }) {
+  const navigate = useNavigate();
   const [showSuggestions, setShowSuggestions] = useState(false);
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>): void {
@@ -35,6 +37,28 @@ export default function Toolbar({
   return (
     <header className="fixed inset-x-0 top-0 z-10 flex h-12 items-center gap-4 border-b border-stone-200 bg-white px-4">
       <h1 className="text-sm font-bold text-stone-700">aaa</h1>
+      <div className="flex items-center gap-1">
+        <button
+          type="button"
+          onClick={() => navigate(-1)}
+          className="rounded p-1 text-stone-400 transition-colors hover:text-stone-600"
+          aria-label="上一頁"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="size-4">
+            <path fillRule="evenodd" d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z" clipRule="evenodd" />
+          </svg>
+        </button>
+        <button
+          type="button"
+          onClick={() => navigate(1)}
+          className="rounded p-1 text-stone-400 transition-colors hover:text-stone-600"
+          aria-label="下一頁"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="size-4">
+            <path fillRule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 1 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clipRule="evenodd" />
+          </svg>
+        </button>
+      </div>
       <div className="relative">
         <input
           type="text"

@@ -1,5 +1,6 @@
 import { Link } from 'react-router';
 import { twMerge } from 'tailwind-merge';
+import { saveScrollPosition } from '@/hooks/useScrollRestore';
 import type { Album } from '@/types';
 
 export default function AlbumCard({
@@ -14,6 +15,7 @@ export default function AlbumCard({
   return (
     <Link
       to={`/${encodeURIComponent(shelfName)}/${encodeURIComponent(album.name)}`}
+      onClick={saveScrollPosition}
       className={twMerge(
         'group block rounded-xl border border-l-4 border-stone-200 bg-white p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow hover:border-stone-300',
         viewed

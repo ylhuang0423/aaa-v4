@@ -27,7 +27,7 @@ export default function AlbumPage({
   return (
     <div>
       <h2 className="text-lg font-bold text-stone-900">
-        <Link to={`/${encodeURIComponent(shelf!)}`} className="text-stone-400 hover:text-stone-600">
+        <Link to={`/${encodeURIComponent(shelf!)}`} state={{ restoreScroll: true }} className="text-stone-400 hover:text-stone-600">
           {shelf}
         </Link>
         <span className="text-stone-300"> / </span>
