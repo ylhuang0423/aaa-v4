@@ -2,7 +2,7 @@ import { useParams } from 'react-router';
 import AlbumCard from '@/components/shelf/AlbumCard';
 import type { PhotoLibrary, Viewed } from '@/types';
 
-export default function ShelfPage({ library, viewed }: { library: PhotoLibrary; viewed: Viewed }) {
+export default function ShelfPage({ library, viewed, columns }: { library: PhotoLibrary; viewed: Viewed; columns: number }) {
   const { shelf } = useParams<{ shelf: string }>();
   const shelfData = library.find(s => s.name === shelf);
 
@@ -20,7 +20,7 @@ export default function ShelfPage({ library, viewed }: { library: PhotoLibrary; 
         {shelfData.albums.length} albums
         {viewedSet.size > 0 && <span className="text-stone-400">・{viewedSet.size} viewed</span>}
       </p>
-      <div className="mt-4 grid gap-3">
+      <div className="mt-4 grid gap-3" style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}>
         {sortedAlbums.length === 0 ? (
           <p className="text-sm text-stone-400">找不到符合的相簿。</p>
         ) : (

@@ -4,7 +4,7 @@
   --font-sans: 'Microsoft JhengHei', 'PingFang TC', system-ui, sans-serif;
 
   --color-primary: var(--color-teal-600);
-  --color-secondary: var(--color-teal-50);
+  --color-secondary: var(--color-amber-600);
   --color-accent: var(--color-amber-500);
   --color-muted: var(--color-stone-400);
   --color-success: var(--color-emerald-500);

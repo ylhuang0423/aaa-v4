@@ -23,7 +23,8 @@ function AppContent() {
   const [photoRoot, setPhotoRoot] = useWebStorage('local', 'photoRoot', '');
   const [history, setHistory] = useWebStorage<HistoryEntry[]>('local', 'history', []);
   const [viewed, setViewed] = useWebStorage<Viewed>('session', 'viewed', {});
-  const [columns, setColumns] = useWebStorage('local', 'albumColumns', 3);
+  const [photoColumns, setPhotoColumns] = useWebStorage('local', 'photoColumns', 3);
+  const [shelfColumns, setShelfColumns] = useWebStorage('local', 'shelfColumns', 1);
   const [searchHistory, setSearchHistory] = useWebStorage<string[]>('local', 'searchHistory', []);
   const [library, setLibrary] = useState<PhotoLibrary>([]);
   const [loading, setLoading] = useState(!!photoRoot);
@@ -92,6 +93,7 @@ function AppContent() {
   );
 
   const isAlbumRoute = /^\/[^/]+\/[^/]+$/.test(location.pathname);
+  const isShelfRoute = /^\/[^/]+$/.test(location.pathname);
 
   return (
     <>
@@ -100,9 +102,13 @@ function AppContent() {
         onQueryChange={setQuery}
         onSearchSubmit={saveSearch}
         searchHistory={searchHistory}
-        columns={columns}
-        onColumnsChange={setColumns}
-        showColumnSlider={isAlbumRoute}
+        slider={
+          isAlbumRoute
+            ? { label: '每排照片', min: 2, max: 6, value: photoColumns, onChange: setPhotoColumns }
+            : isShelfRoute
+              ? { label: '每排相簿', min: 1, max: 4, value: shelfColumns, onChange: setShelfColumns }
+              : undefined
+        }
         onRefresh={photoRoot ? scan : undefined}
       />
       <Sidebar shelves={filteredLibrary} library={sortedLibrary} viewed={viewed} />
@@ -117,10 +123,10 @@ function AppContent() {
               <HomePage photoRoot={photoRoot} onSelectDirectory={handleSelectDirectory} history={history} />
             }
           />
-          <Route path="/:shelf" element={<ShelfPage library={filteredLibrary} viewed={viewed} />} />
+          <Route path="/:shelf" element={<ShelfPage library={filteredLibrary} viewed={viewed} columns={shelfColumns} />} />
           <Route
             path="/:shelf/:album"
-            element={<AlbumPage library={sortedLibrary} onView={markViewed} columns={columns} />}
+            element={<AlbumPage library={sortedLibrary} onView={markViewed} columns={photoColumns} />}
           />
         </Routes>
       </main>

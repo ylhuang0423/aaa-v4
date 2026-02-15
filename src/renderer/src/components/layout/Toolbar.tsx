@@ -1,23 +1,19 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 
 export default function Toolbar({
   query,
   onQueryChange,
   onSearchSubmit,
   searchHistory,
-  columns,
-  onColumnsChange,
-  showColumnSlider,
+  slider,
   onRefresh,
 }: {
   query: string;
   onQueryChange: (query: string) => void;
   onSearchSubmit: (query: string) => void;
   searchHistory: string[];
-  columns: number;
-  onColumnsChange: (columns: number) => void;
-  showColumnSlider: boolean;
+  slider?: { label: string; min: number; max: number; value: number; onChange: (v: number) => void };
   onRefresh?: () => void;
 }) {
   const navigate = useNavigate();
@@ -38,7 +34,9 @@ export default function Toolbar({
 
   return (
     <header className="fixed inset-x-0 top-0 z-10 flex h-12 items-center gap-4 border-b border-stone-200 bg-white px-4">
-      <h1 className="text-sm font-bold text-stone-700">aaa</h1>
+      <Link to="/" className="text-base font-bold text-secondary">
+        aaa v4
+      </Link>
       <div className="flex items-center gap-1">
         <button
           type="button"
@@ -100,18 +98,18 @@ export default function Toolbar({
           </ul>
         )}
       </div>
-      {showColumnSlider && (
+      {slider && (
         <div className="ml-auto flex items-center gap-2">
-          <label className="text-xs text-stone-500">每排張數</label>
+          <label className="text-xs text-stone-500">{slider.label}</label>
           <input
             type="range"
-            min={2}
-            max={6}
-            value={columns}
-            onChange={e => onColumnsChange(Number(e.target.value))}
+            min={slider.min}
+            max={slider.max}
+            value={slider.value}
+            onChange={e => slider.onChange(Number(e.target.value))}
             className="w-24"
           />
-          <span className="w-4 text-center text-xs text-stone-500">{columns}</span>
+          <span className="w-4 text-center text-xs text-stone-500">{slider.value}</span>
         </div>
       )}
     </header>
