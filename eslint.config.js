@@ -106,7 +106,7 @@ export default tseslint.config(
   // Main + Preload: TypeScript (Node.js context, no React)
   {
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
-    files: ['src/main/**/*.ts', 'src/preload/**/*.ts'],
+    files: ['src/main/**/*.ts', 'src/preload/**/*.ts', 'src/shared/**/*.ts'],
     languageOptions: {
       ecmaVersion: 2020,
       globals: node,

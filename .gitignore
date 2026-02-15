@@ -8,6 +8,9 @@ out
 # Local settings (not committed)
 *.local.*
 
+# Test photo data
+photo/
+
 # Environment variables
 .env
 .env.*

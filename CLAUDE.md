@@ -10,6 +10,7 @@
 src/
 ├── main/           # Electron 主進程（Node.js，fs 操作）
 ├── preload/        # Preload bridge（contextBridge）
+├── shared/         # 跨進程共用型別（main、preload、renderer 皆可 import）
 └── renderer/       # React SPA（純前端）
     └── src/
         ├── App.tsx
@@ -19,11 +20,13 @@ src/
 
 三個 TypeScript 配置對應三個進程：
 
-| 配置                 | 涵蓋                 | 環境        |
-| -------------------- | -------------------- | ----------- |
-| `tsconfig.node.json` | main + preload       | Node.js     |
-| `tsconfig.web.json`  | renderer             | DOM + React |
-| `tsconfig.json`      | root（project refs） | —           |
+| 配置                 | 涵蓋                    | 環境        |
+| -------------------- | ----------------------- | ----------- |
+| `tsconfig.node.json` | main + preload + shared | Node.js     |
+| `tsconfig.web.json`  | renderer + shared       | DOM + React |
+| `tsconfig.json`      | root（project refs）    | —           |
+
+Renderer 使用 `@/` alias（→ `src/renderer/src/`）和 `@shared/` alias（→ `src/shared/`）。
 
 ## 技術堆疊
 

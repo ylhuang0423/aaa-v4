@@ -1,10 +1,13 @@
-import { app, shell, BrowserWindow, ipcMain } from 'electron';
+import { app, shell, BrowserWindow, ipcMain, dialog, net, protocol } from 'electron';
+import { readdir } from 'fs/promises';
 import { join } from 'path';
+import { fileURLToPath, pathToFileURL } from 'url';
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
 import icon from '../../resources/icon.png?asset';
 
+const PHOTO_EXTENSIONS = new Set(['.jpg', '.jpeg', '.png', '.gif']);
+
 function createWindow(): void {
-  // Create the browser window.
   const mainWindow = new BrowserWindow({
     width: 900,
     height: 670,
@@ -12,7 +15,7 @@ function createWindow(): void {
     autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
-      preload: join(__dirname, '../preload/index.js'),
+      preload: fileURLToPath(new URL('../preload/index.mjs', import.meta.url)),
       sandbox: false,
     },
   });
@@ -26,8 +29,6 @@ function createWindow(): void {
     return { action: 'deny' };
   });
 
-  // HMR for renderer base on electron-vite cli.
-  // Load the remote URL for development or the local html file for production.
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
     mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL']);
   } else {
@@ -35,40 +36,73 @@ function createWindow(): void {
   }
 }
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
+function registerIpcHandlers(): void {
+  ipcMain.handle('dialog:selectDirectory', async () => {
+    const result = await dialog.showOpenDialog({
+      properties: ['openDirectory'],
+    });
+    return result.canceled ? null : result.filePaths[0];
+  });
+
+  ipcMain.handle('fs:scanDirectory', async (_event, rootPath: string) => {
+    const shelfDirs = await readdir(rootPath, { withFileTypes: true });
+    const shelves = await Promise.all(
+      shelfDirs
+        .filter(entry => entry.isDirectory())
+        .map(async shelfEntry => {
+          const shelfPath = join(rootPath, shelfEntry.name);
+          const albumDirs = await readdir(shelfPath, { withFileTypes: true });
+          const albums = await Promise.all(
+            albumDirs
+              .filter(entry => entry.isDirectory())
+              .map(async albumEntry => {
+                const albumPath = join(shelfPath, albumEntry.name);
+                const files = await readdir(albumPath, { withFileTypes: true });
+                const photos = files
+                  .filter(file => {
+                    if (!file.isFile()) return false;
+                    const ext = file.name.slice(file.name.lastIndexOf('.')).toLowerCase();
+                    return PHOTO_EXTENSIONS.has(ext);
+                  })
+                  .map(file => ({
+                    name: file.name,
+                    url: 'local-file://' + encodeURIComponent(join(albumPath, file.name)),
+                  }));
+                return { name: albumEntry.name, photos };
+              }),
+          );
+          return { name: shelfEntry.name, albums };
+        }),
+    );
+    return shelves;
+  });
+}
+
+protocol.registerSchemesAsPrivileged([
+  { scheme: 'local-file', privileges: { bypassCSP: true, stream: true } },
+]);
+
 app.whenReady().then(() => {
-  // Set app user model id for windows
+  protocol.handle('local-file', (request) => {
+    const filePath = decodeURIComponent(request.url.slice('local-file://'.length));
+    return net.fetch(pathToFileURL(filePath).href);
+  });
   electronApp.setAppUserModelId('com.ylhuang.aaa-v4');
 
-  // Default open or close DevTools by F12 in development
-  // and ignore CommandOrControl + R in production.
-  // see https://github.com/alex8088/electron-toolkit/tree/master/packages/utils
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window);
   });
 
-  // IPC test
-  ipcMain.on('ping', () => console.log('pong'));
-
+  registerIpcHandlers();
   createWindow();
 
   app.on('activate', function () {
-    // On macOS it's common to re-create a window in the app when the
-    // dock icon is clicked and there are no other windows open.
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });
 });
 
-// Quit when all windows are closed, except on macOS. There, it's common
-// for applications and their menu bar to stay active until the user quits
-// explicitly with Cmd + Q.
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit();
   }
 });
-
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.

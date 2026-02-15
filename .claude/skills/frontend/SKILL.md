@@ -53,6 +53,7 @@ import { useSomething } from '@/hooks/useSomething';
 - Tailwind 4：無 `tailwind.config.js`，全局設定在 `src/renderer/src/styles/global.css`（`@theme`, `@layer base`）
 - 直接使用 Tailwind utility classes
 - className 組合複雜或需條件判斷時，用 `twMerge()`
+- **字重限制**：主字體微軟正黑體只有 normal 與 bold 兩種粗細。加重時一律用 `font-bold`，禁止 `font-medium`、`font-semibold`、`font-extrabold` 等中間值（視覺上無效果）
 
 ```tsx
 // 簡單：直接寫
@@ -60,7 +61,7 @@ import { useSomething } from '@/hooks/useSomething';
 
 // 條件判斷：twMerge
 <p className={twMerge(
-  'text-2xl font-semibold text-zinc-900',
+  'text-2xl font-bold text-zinc-900',
   variant === 'positive' && 'text-success',
   variant === 'negative' && 'text-error',
 )}>
@@ -82,7 +83,7 @@ import { useSomething } from '@/hooks/useSomething';
 | ------------ | ------------------------------------------------------ | ------------ |
 | Card 容器    | `rounded-xl border border-zinc-200 bg-white shadow-sm` | 卡片外框     |
 | Card padding | `p-4`                                                  | 卡片內距     |
-| 標題         | `text-lg font-semibold text-zinc-900`                  | 區塊標題     |
+| 標題         | `text-lg font-bold text-zinc-900`                      | 區塊標題     |
 | 標籤         | `text-sm text-zinc-500`                                | 次要說明文字 |
 
 > 此表隨開發持續擴充。新增 pattern 前先查表，避免重複定義。

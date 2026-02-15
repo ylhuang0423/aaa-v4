@@ -125,29 +125,83 @@ aaa3/
 
 ```
 photo/
-├── 105/                              ← List（民國年份）
-│   ├── 1060201-1農地清晨小雨後/      ← Album（民國日期 + 事件描述）
-│   │   ├── IMG_1202.JPG             ← Photos（JPG 檔案）
+├── 106/                                          ← Shelf（通常是民國年份）
+│   ├── 1060101炸醃肉+糖醋魚+炸甜粿+詩捷農地/    ← Album
+│   │   ├── IMG_1202.JPG                          ← Photo
 │   │   ├── IMG_1203.JPG
 │   │   └── ...
-│   ├── 1060201-2年初五家族農地聚餐/
-│   ├── 1060202高雄漢來午茶+鳳山疊疊樂/
+│   ├── 1060103香煎班頭魚+胡椒白菜雞+農地晨霧/
+│   ├── 1060104黑番茄+玉米+茄花/
 │   └── ...
-├── 106/
+├── 107/
 │   └── ...
 └── ...
 ```
 
-### 命名慣例
+### 命名習慣
 
-- **List 名稱** = 民國年份（如 `105`、`106`）
-- **Album 名稱** = `{民國日期}{事件描述}`，同日多事件用 `-1`、`-2` 區分
-- **照片檔名** = 相機原始命名（如 `IMG_1202.JPG`）
+資料夾由人工管理，以下僅為常見慣例，系統不依賴特定命名格式：
 
-### 實際規模（用戶提供估計）
+- **Shelf** — 通常以民國年份命名（如 `106`、`107`）
+- **Album** — 通常以日期加事件描述命名（如 `1060104黑番茄+玉米+茄花`）
+- **Photo** — 相機原始檔名（如 `IMG_1202.JPG`）
 
-- 年份範圍：民國 99 年至今（約 16+ 年）
+### 預估規模
+
+- 年份範圍：民國 99 年至今，持續更新（超過 15 年）
 - 每年相簿數量：100 本以上（逐年增加）
 - 圖檔總量：可能破萬
 - 單頁顯示照片：控制在 100-200 張
 - 圖檔大小：經過人工輸出控管（不會太大）
+
+---
+
+## V4 架構設計
+
+完整計畫見 `.claude/plans/groovy-mapping-kettle.md`。以下為摘要。
+
+### 資料模型
+
+```typescript
+interface Photo {
+  name: string;
+  url: string;
+}
+interface Album {
+  name: string;
+  photos: Photo[];
+}
+interface Shelf {
+  name: string;
+  albums: Album[];
+}
+type PhotoLibrary = Shelf[];
+```
+
+命名變更：aaa3 `rawLists` → `PhotoLibrary`、`list` → `Shelf`（抽象容器，不綁年份語意）、`seens` → `viewed`。
+
+### IPC
+
+Main process 暴露兩個 API：`selectDirectory()`（原生資料夾對話框）、`scanDirectory(rootPath)`（非同步遞迴掃描）。
+
+### 路由（HashRouter）
+
+| 路由             | 頁面      | 職責                   |
+| ---------------- | --------- | ---------------------- |
+| `/`              | HomePage  | 選資料夾、瀏覽歷史     |
+| `/:shelf`        | ShelfPage | 相簿列表 + viewed 標示 |
+| `/:shelf/:album` | AlbumPage | 照片瀑布流             |
+
+### 持久化（localStorage）
+
+`photoRoot`, `viewed`, `history`, `scrollPositions`, `albumColumns`, `searchHistory`
+
+### 排序與搜尋
+
+- 預設降序（Z→A），新的年份/日期在上
+- 多關鍵詞 OR 搜尋（空格分隔）
+- 搜尋歷史保留最近 20 筆
+
+### 版面
+
+Toolbar（fixed top）+ Sidebar（shelf 列表）+ Main Content（router outlet）
