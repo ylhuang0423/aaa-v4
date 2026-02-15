@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { HashRouter, Route, Routes, useLocation } from 'react-router';
 import Sidebar from '@/components/layout/Sidebar';
 import Toolbar from '@/components/layout/Toolbar';
-import useLocalStorage from '@/hooks/useLocalStorage';
+import useWebStorage from '@/hooks/useWebStorage';
 import useScrollRestore from '@/hooks/useScrollRestore';
 import AlbumPage from '@/pages/AlbumPage';
 import HomePage from '@/pages/HomePage';
@@ -20,11 +20,11 @@ export default function App() {
 function AppContent() {
   const location = useLocation();
   useScrollRestore();
-  const [photoRoot, setPhotoRoot] = useLocalStorage('photoRoot', '');
-  const [history, setHistory] = useLocalStorage<HistoryEntry[]>('history', []);
-  const [viewed, setViewed] = useLocalStorage<Viewed>('viewed', {});
-  const [columns, setColumns] = useLocalStorage('albumColumns', 3);
-  const [searchHistory, setSearchHistory] = useLocalStorage<string[]>('searchHistory', []);
+  const [photoRoot, setPhotoRoot] = useWebStorage('local', 'photoRoot', '');
+  const [history, setHistory] = useWebStorage<HistoryEntry[]>('local', 'history', []);
+  const [viewed, setViewed] = useWebStorage<Viewed>('session', 'viewed', {});
+  const [columns, setColumns] = useWebStorage('local', 'albumColumns', 3);
+  const [searchHistory, setSearchHistory] = useWebStorage<string[]>('local', 'searchHistory', []);
   const [library, setLibrary] = useState<PhotoLibrary>([]);
   const [loading, setLoading] = useState(!!photoRoot);
   const [query, setQuery] = useState('');
