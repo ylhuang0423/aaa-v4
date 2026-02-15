@@ -9,6 +9,7 @@ export default function Toolbar({
   columns,
   onColumnsChange,
   showColumnSlider,
+  onRefresh,
 }: {
   query: string;
   onQueryChange: (query: string) => void;
@@ -17,6 +18,7 @@ export default function Toolbar({
   columns: number;
   onColumnsChange: (columns: number) => void;
   showColumnSlider: boolean;
+  onRefresh?: () => void;
 }) {
   const navigate = useNavigate();
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -41,7 +43,7 @@ export default function Toolbar({
         <button
           type="button"
           onClick={() => navigate(-1)}
-          className="rounded p-1 text-stone-400 transition-colors hover:text-stone-600"
+          className="rounded-full bg-stone-100 p-1.5 text-stone-500 transition-colors hover:bg-stone-200 hover:text-stone-600 active:bg-stone-300 active:text-stone-700"
           aria-label="上一頁"
         >
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="size-4">
@@ -51,13 +53,25 @@ export default function Toolbar({
         <button
           type="button"
           onClick={() => navigate(1)}
-          className="rounded p-1 text-stone-400 transition-colors hover:text-stone-600"
+          className="rounded-full bg-stone-100 p-1.5 text-stone-500 transition-colors hover:bg-stone-200 hover:text-stone-600 active:bg-stone-300 active:text-stone-700"
           aria-label="下一頁"
         >
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="size-4">
             <path fillRule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 1 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clipRule="evenodd" />
           </svg>
         </button>
+        {onRefresh && (
+          <button
+            type="button"
+            onClick={onRefresh}
+            className="rounded-full bg-stone-100 p-1.5 text-stone-500 transition-colors hover:bg-stone-200 hover:text-stone-600 active:bg-stone-300 active:text-stone-700"
+            aria-label="重新掃描"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="size-4">
+              <path fillRule="evenodd" d="M15.312 11.424a5.5 5.5 0 0 1-9.201 2.466l-.312-.311h2.433a.75.75 0 0 0 0-1.5H4.598a.75.75 0 0 0-.75.75v3.634a.75.75 0 0 0 1.5 0v-2.033l.31.31A7 7 0 0 0 17 11.25a.75.75 0 0 0-1.688-.326ZM4.688 8.576a5.5 5.5 0 0 1 9.201-2.466l.312.311H11.77a.75.75 0 0 0 0 1.5h3.634a.75.75 0 0 0 .75-.75V3.537a.75.75 0 0 0-1.5 0v2.033l-.31-.31A7 7 0 0 0 3 8.75a.75.75 0 0 0 1.688.326Z" clipRule="evenodd" />
+            </svg>
+          </button>
+        )}
       </div>
       <div className="relative">
         <input

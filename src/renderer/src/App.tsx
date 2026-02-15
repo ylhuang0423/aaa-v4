@@ -29,17 +29,19 @@ function AppContent() {
   const [loading, setLoading] = useState(!!photoRoot);
   const [query, setQuery] = useState('');
 
-  useEffect(() => {
+  const scan = useCallback(() => {
     if (!photoRoot) return;
+    setLoading(true);
     window.api.scanDirectory(photoRoot).then(data => {
       setLibrary(data);
       setLoading(false);
     });
   }, [photoRoot]);
 
+  useEffect(scan, [scan]);
+
   const handleSelectDirectory = useCallback(
     (path: string) => {
-      setLoading(true);
       setPhotoRoot(path);
     },
     [setPhotoRoot],
@@ -101,6 +103,7 @@ function AppContent() {
         columns={columns}
         onColumnsChange={setColumns}
         showColumnSlider={isAlbumRoute}
+        onRefresh={photoRoot ? scan : undefined}
       />
       <Sidebar shelves={filteredLibrary} library={sortedLibrary} viewed={viewed} />
       <main className="mt-12 ml-48 p-6">
