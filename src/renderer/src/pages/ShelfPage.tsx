@@ -7,7 +7,7 @@ export default function ShelfPage({ library, viewed }: { library: PhotoLibrary; 
   const shelfData = library.find(s => s.name === shelf);
 
   if (!shelfData) {
-    return <p className="text-sm text-zinc-500">Shelf not found.</p>;
+    return <p className="text-sm text-stone-500">找不到此分類。</p>;
   }
 
   const viewedSet = new Set(viewed[shelfData.name] ?? []);
@@ -15,17 +15,24 @@ export default function ShelfPage({ library, viewed }: { library: PhotoLibrary; 
 
   return (
     <div>
-      <h2 className="text-lg font-bold text-zinc-900">{shelfData.name}</h2>
-      <p className="mt-1 text-sm text-zinc-500">{shelfData.albums.length} albums</p>
+      <h2 className="text-lg font-bold text-stone-900">{shelfData.name}</h2>
+      <p className="mt-1 text-sm text-stone-500">
+        {shelfData.albums.length} albums
+        {viewedSet.size > 0 && <span className="text-stone-400">・{viewedSet.size} viewed</span>}
+      </p>
       <div className="mt-4 grid gap-3">
-        {sortedAlbums.map(album => (
-          <AlbumCard
-            key={album.name}
-            album={album}
-            shelfName={shelfData.name}
-            viewed={viewedSet.has(album.name)}
-          />
-        ))}
+        {sortedAlbums.length === 0 ? (
+          <p className="text-sm text-stone-400">找不到符合的相簿。</p>
+        ) : (
+          sortedAlbums.map(album => (
+            <AlbumCard
+              key={album.name}
+              album={album}
+              shelfName={shelfData.name}
+              viewed={viewedSet.has(album.name)}
+            />
+          ))
+        )}
       </div>
     </div>
   );

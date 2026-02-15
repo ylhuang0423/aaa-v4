@@ -3,10 +3,10 @@
 @theme {
   --font-sans: 'Microsoft JhengHei', 'PingFang TC', system-ui, sans-serif;
 
-  --color-primary: var(--color-blue-600);
-  --color-secondary: var(--color-blue-100);
-  --color-muted: var(--color-zinc-400);
-  --color-info: var(--color-blue-500);
+  --color-primary: var(--color-teal-600);
+  --color-secondary: var(--color-teal-50);
+  --color-accent: var(--color-amber-500);
+  --color-muted: var(--color-stone-400);
   --color-success: var(--color-emerald-500);
   --color-warning: var(--color-yellow-500);
   --color-error: var(--color-red-500);
@@ -19,6 +19,6 @@
 
   body {
     @apply min-h-screen;
-    @apply bg-zinc-50 text-zinc-900;
+    @apply bg-amber-50 text-stone-900;
   }
 }

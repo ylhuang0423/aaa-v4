@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useParams } from 'react-router';
+import { Link, useParams } from 'react-router';
 import PhotoGrid from '@/components/album/PhotoGrid';
 import type { PhotoLibrary } from '@/types';
 
@@ -21,13 +21,19 @@ export default function AlbumPage({
   }, [shelf, album, onView]);
 
   if (!albumData) {
-    return <p className="text-sm text-zinc-500">Album not found.</p>;
+    return <p className="text-sm text-stone-500">找不到此相簿。</p>;
   }
 
   return (
     <div>
-      <h2 className="text-lg font-bold text-zinc-900">{albumData.name}</h2>
-      <p className="mt-1 text-sm text-zinc-500">{albumData.photos.length} photos</p>
+      <h2 className="text-lg font-bold text-stone-900">
+        <Link to={`/${encodeURIComponent(shelf!)}`} className="text-stone-400 hover:text-stone-600">
+          {shelf}
+        </Link>
+        <span className="text-stone-300"> / </span>
+        {albumData.name}
+      </h2>
+      <p className="mt-1 text-sm text-stone-500">{albumData.photos.length} photos</p>
       <div className="mt-4">
         <PhotoGrid photos={albumData.photos} columns={columns} />
       </div>

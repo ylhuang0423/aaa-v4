@@ -13,7 +13,7 @@ export default function WidgetName({ label, value }: { label: string; value: str
 
 // Private components 在主元件下方，用 function declaration（hoisting）
 function LoadingSkeleton() {
-  return <div className="h-12 animate-pulse rounded bg-zinc-200" />;
+  return <div className="h-12 animate-pulse rounded bg-stone-200" />;
 }
 ```
 
@@ -57,11 +57,11 @@ import { useSomething } from '@/hooks/useSomething';
 
 ```tsx
 // 簡單：直接寫
-<div className="rounded-xl border border-zinc-200 bg-white p-4 shadow-sm">
+<div className="rounded-xl border border-stone-200 bg-white p-4 shadow-sm">
 
 // 條件判斷：twMerge
 <p className={twMerge(
-  'text-2xl font-bold text-zinc-900',
+  'text-2xl font-bold text-stone-900',
   variant === 'positive' && 'text-success',
   variant === 'negative' && 'text-error',
 )}>
@@ -72,7 +72,7 @@ import { useSomething } from '@/hooks/useSomething';
 1. **Semantic color variables**（`global.css` `@theme` 定義）— 狀態相關元素
    - `text-info`, `bg-success`, `text-warning`, `text-error`
 2. **Tailwind 內建色** — 一般 styling
-   - `text-zinc-500`, `bg-zinc-100`, `border-zinc-200`
+   - `text-stone-500`, `bg-stone-100`, `border-stone-200`
 3. **自定義 utilities** — 僅在必要時使用
 
 ### Style Tokens
@@ -81,10 +81,10 @@ import { useSomething } from '@/hooks/useSomething';
 
 | Token        | Classes                                                | 用途         |
 | ------------ | ------------------------------------------------------ | ------------ |
-| Card 容器    | `rounded-xl border border-zinc-200 bg-white shadow-sm` | 卡片外框     |
+| Card 容器    | `rounded-xl border border-stone-200 bg-white shadow-sm` | 卡片外框     |
 | Card padding | `p-4`                                                  | 卡片內距     |
-| 標題         | `text-lg font-bold text-zinc-900`                      | 區塊標題     |
-| 標籤         | `text-sm text-zinc-500`                                | 次要說明文字 |
+| 標題         | `text-lg font-bold text-stone-900`                      | 區塊標題     |
+| 標籤         | `text-sm text-stone-500`                                | 次要說明文字 |
 
 > 此表隨開發持續擴充。新增 pattern 前先查表，避免重複定義。
 

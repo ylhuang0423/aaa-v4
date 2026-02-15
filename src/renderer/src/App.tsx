@@ -26,12 +26,24 @@ function AppContent() {
   const [columns, setColumns] = useLocalStorage('albumColumns', 3);
   const [searchHistory, setSearchHistory] = useLocalStorage<string[]>('searchHistory', []);
   const [library, setLibrary] = useState<PhotoLibrary>([]);
+  const [loading, setLoading] = useState(!!photoRoot);
   const [query, setQuery] = useState('');
 
   useEffect(() => {
     if (!photoRoot) return;
-    window.api.scanDirectory(photoRoot).then(setLibrary);
+    window.api.scanDirectory(photoRoot).then(data => {
+      setLibrary(data);
+      setLoading(false);
+    });
   }, [photoRoot]);
+
+  const handleSelectDirectory = useCallback(
+    (path: string) => {
+      setLoading(true);
+      setPhotoRoot(path);
+    },
+    [setPhotoRoot],
+  );
 
   const sortedLibrary = useMemo(
     () => [...library].sort((a, b) => b.name.localeCompare(a.name)),
@@ -90,13 +102,16 @@ function AppContent() {
         onColumnsChange={setColumns}
         showColumnSlider={isAlbumRoute}
       />
-      <Sidebar shelves={filteredLibrary} />
+      <Sidebar shelves={filteredLibrary} library={sortedLibrary} viewed={viewed} />
       <main className="mt-12 ml-48 p-6">
+        {loading && (
+          <p className="text-sm text-stone-500">正在掃描照片資料夾...</p>
+        )}
         <Routes>
           <Route
             path="/"
             element={
-              <HomePage photoRoot={photoRoot} onSelectDirectory={setPhotoRoot} history={history} />
+              <HomePage photoRoot={photoRoot} onSelectDirectory={handleSelectDirectory} history={history} />
             }
           />
           <Route path="/:shelf" element={<ShelfPage library={filteredLibrary} viewed={viewed} />} />
