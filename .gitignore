@@ -3,12 +3,13 @@ dist
 out
 .DS_Store
 .eslintcache
+*.tsbuildinfo
 *.log*
 
 # Local settings (not committed)
 *.local.*
 
-# Test photo data
+# Local photo data
 photo/
 
 # Environment variables

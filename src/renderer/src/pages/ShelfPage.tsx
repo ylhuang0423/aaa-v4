@@ -1,17 +1,19 @@
-import { useParams } from 'react-router';
+import { useParams, useSearchParams } from 'react-router';
 import AlbumCard from '@/components/shelf/AlbumCard';
 import type { PhotoLibrary, Viewed } from '@/types';
 
 export default function ShelfPage({ library, viewed, columns }: { library: PhotoLibrary; viewed: Viewed; columns: number }) {
   const { shelf } = useParams<{ shelf: string }>();
+  const [searchParams] = useSearchParams();
   const shelfData = library.find(s => s.name === shelf);
 
   if (!shelfData) {
-    return <p className="text-sm text-stone-500">找不到此分類。</p>;
+    return <p className="text-sm text-stone-500">找不到相關內容。</p>;
   }
 
   const viewedSet = new Set(viewed[shelfData.name] ?? []);
   const sortedAlbums = [...shelfData.albums].sort((a, b) => b.name.localeCompare(a.name));
+  const keywords = (searchParams.get('q') ?? '').split(/\s+/).filter(Boolean);
 
   return (
     <div>
@@ -30,6 +32,7 @@ export default function ShelfPage({ library, viewed, columns }: { library: Photo
               album={album}
               shelfName={shelfData.name}
               viewed={viewedSet.has(album.name)}
+              keywords={keywords}
             />
           ))
         )}

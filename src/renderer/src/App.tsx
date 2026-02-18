@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { HashRouter, Route, Routes, useLocation } from 'react-router';
+import { HashRouter, Route, Routes, useLocation, useNavigate } from 'react-router';
 import Sidebar from '@/components/layout/Sidebar';
 import Toolbar from '@/components/layout/Toolbar';
-import useWebStorage from '@/hooks/useWebStorage';
 import useScrollRestore from '@/hooks/useScrollRestore';
+import useSearchQuery from '@/hooks/useSearchQuery';
+import useWebStorage from '@/hooks/useWebStorage';
 import AlbumPage from '@/pages/AlbumPage';
 import HomePage from '@/pages/HomePage';
 import ShelfPage from '@/pages/ShelfPage';
@@ -19,7 +20,9 @@ export default function App() {
 
 function AppContent() {
   const location = useLocation();
+  const navigate = useNavigate();
   useScrollRestore();
+  const { query, setQuery, clearQuery } = useSearchQuery();
   const [photoRoot, setPhotoRoot] = useWebStorage('local', 'photoRoot', '');
   const [history, setHistory] = useWebStorage<HistoryEntry[]>('local', 'history', []);
   const [viewed, setViewed] = useWebStorage<Viewed>('session', 'viewed', {});
@@ -28,18 +31,26 @@ function AppContent() {
   const [searchHistory, setSearchHistory] = useWebStorage<string[]>('local', 'searchHistory', []);
   const [library, setLibrary] = useState<PhotoLibrary>([]);
   const [loading, setLoading] = useState(!!photoRoot);
-  const [query, setQuery] = useState('');
+
+  const performScan = useCallback(
+    () =>
+      window.api.scanDirectory(photoRoot).then(data => {
+        setLibrary(data);
+        setLoading(false);
+      }),
+    [photoRoot],
+  );
+
+  useEffect(() => {
+    if (!photoRoot) return;
+    performScan();
+  }, [photoRoot, performScan]);
 
   const scan = useCallback(() => {
     if (!photoRoot) return;
     setLoading(true);
-    window.api.scanDirectory(photoRoot).then(data => {
-      setLibrary(data);
-      setLoading(false);
-    });
-  }, [photoRoot]);
-
-  useEffect(scan, [scan]);
+    performScan();
+  }, [photoRoot, performScan]);
 
   const handleSelectDirectory = useCallback(
     (path: string) => {
@@ -80,17 +91,39 @@ function AppContent() {
     [setViewed, setHistory],
   );
 
-  const saveSearch = useCallback(
+  const handleSearch = useCallback(
     (q: string) => {
       const trimmed = q.trim();
-      if (!trimmed) return;
+      if (!trimmed) {
+        clearQuery();
+        return;
+      }
+      setQuery(trimmed);
       setSearchHistory(prev => {
         const filtered = prev.filter(s => s !== trimmed);
         return [trimmed, ...filtered].slice(0, 20);
       });
+      const keywords = trimmed.split(/\s+/).filter(Boolean);
+      const firstShelf = sortedLibrary.find(shelf =>
+        shelf.albums.some(album => keywords.some(kw => album.name.includes(kw))),
+      );
+      if (firstShelf) {
+        navigate(`/${encodeURIComponent(firstShelf.name)}?q=${encodeURIComponent(trimmed)}`);
+      }
+    },
+    [setQuery, clearQuery, setSearchHistory, sortedLibrary, navigate],
+  );
+
+  const removeSearchHistoryItem = useCallback(
+    (term: string) => {
+      setSearchHistory(prev => prev.filter(s => s !== term));
     },
     [setSearchHistory],
   );
+
+  const clearSearchHistory = useCallback(() => {
+    setSearchHistory([]);
+  }, [setSearchHistory]);
 
   const isAlbumRoute = /^\/[^/]+\/[^/]+$/.test(location.pathname);
   const isShelfRoute = /^\/[^/]+$/.test(location.pathname);
@@ -99,9 +132,11 @@ function AppContent() {
     <>
       <Toolbar
         query={query}
-        onQueryChange={setQuery}
-        onSearchSubmit={saveSearch}
+        onSearch={handleSearch}
+        onClearSearch={clearQuery}
         searchHistory={searchHistory}
+        onRemoveHistoryItem={removeSearchHistoryItem}
+        onClearHistory={clearSearchHistory}
         slider={
           isAlbumRoute
             ? { label: '每排照片', min: 2, max: 6, value: photoColumns, onChange: setPhotoColumns }
@@ -120,7 +155,11 @@ function AppContent() {
           <Route
             path="/"
             element={
-              <HomePage photoRoot={photoRoot} onSelectDirectory={handleSelectDirectory} history={history} />
+              <HomePage
+                photoRoot={photoRoot}
+                onSelectDirectory={handleSelectDirectory}
+                history={history}
+              />
             }
           />
           <Route path="/:shelf" element={<ShelfPage library={filteredLibrary} viewed={viewed} columns={shelfColumns} />} />

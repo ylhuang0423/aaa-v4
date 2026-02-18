@@ -1,35 +1,109 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 
 export default function Toolbar({
   query,
-  onQueryChange,
-  onSearchSubmit,
+  onSearch,
+  onClearSearch,
   searchHistory,
+  onRemoveHistoryItem,
+  onClearHistory,
   slider,
   onRefresh,
 }: {
   query: string;
-  onQueryChange: (query: string) => void;
-  onSearchSubmit: (query: string) => void;
+  onSearch: (q: string) => void;
+  onClearSearch: () => void;
   searchHistory: string[];
+  onRemoveHistoryItem: (term: string) => void;
+  onClearHistory: () => void;
   slider?: { label: string; min: number; max: number; value: number; onChange: (v: number) => void };
   onRefresh?: () => void;
 }) {
   const navigate = useNavigate();
-  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [chips, setChips] = useState<string[]>([]);
+  const [inputValue, setInputValue] = useState('');
+  const [suggestions, setSuggestions] = useState(false);
+  const [prevQuery, setPrevQuery] = useState(query);
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>): void {
-    if (e.key === 'Enter') {
-      onSearchSubmit(query);
-      setShowSuggestions(false);
+  if (prevQuery !== query) {
+    setPrevQuery(query);
+    setChips(query.split(/\s+/).filter(Boolean));
+    setInputValue('');
+  }
+
+  function submitSearch(finalChips: string[]): void {
+    if (finalChips.length === 0) {
+      onClearSearch();
+    } else {
+      onSearch(finalChips.join(' '));
     }
   }
 
+  function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>): void {
+    if (e.nativeEvent.isComposing) return;
+
+    if (e.key === ' ') {
+      const trimmed = inputValue.trim();
+      if (trimmed) {
+        e.preventDefault();
+        setChips(prev => [...prev, trimmed]);
+        setInputValue('');
+      }
+      return;
+    }
+
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const trimmed = inputValue.trim();
+      const finalChips = trimmed ? [...chips, trimmed] : chips;
+      setChips(finalChips);
+      setInputValue('');
+      submitSearch(finalChips);
+      setSuggestions(false);
+      return;
+    }
+
+    if (e.key === 'Backspace' && inputValue === '') {
+      if (chips.length > 0) {
+        const newChips = chips.slice(0, -1);
+        setChips(newChips);
+        submitSearch(newChips);
+      }
+    }
+
+    if (e.key === 'Escape') {
+      setChips([]);
+      setInputValue('');
+      onClearSearch();
+      setSuggestions(false);
+      inputRef.current?.blur();
+    }
+  }
+
+  function handleSearchClick(): void {
+    const trimmed = inputValue.trim();
+    const finalChips = trimmed ? [...chips, trimmed] : chips;
+    setChips(finalChips);
+    setInputValue('');
+    submitSearch(finalChips);
+    setSuggestions(false);
+  }
+
+  function handleRemoveChip(index: number): void {
+    const newChips = chips.filter((_, i) => i !== index);
+    setChips(newChips);
+    submitSearch(newChips);
+    inputRef.current?.focus();
+  }
+
   function handleSuggestionClick(term: string): void {
-    onQueryChange(term);
-    onSearchSubmit(term);
-    setShowSuggestions(false);
+    const keywords = term.split(/\s+/).filter(Boolean);
+    setChips(keywords);
+    setInputValue('');
+    submitSearch(keywords);
+    setSuggestions(false);
   }
 
   return (
@@ -72,26 +146,125 @@ export default function Toolbar({
         )}
       </div>
       <div className="relative">
-        <input
-          type="text"
-          value={query}
-          onChange={e => onQueryChange(e.target.value)}
-          onKeyDown={handleKeyDown}
-          onFocus={() => setShowSuggestions(true)}
-          onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
-          placeholder="搜尋相簿..."
-          className="focus:border-primary h-8 w-64 rounded-lg border border-stone-200 bg-stone-50 px-3 text-sm text-stone-900 outline-none placeholder:text-stone-400"
-        />
-        {showSuggestions && searchHistory.length > 0 && (
-          <ul className="absolute top-full left-0 mt-1 w-64 rounded-lg border border-stone-200 bg-white py-1 shadow-lg">
-            {searchHistory.map(term => (
-              <li key={term}>
+        <div className="flex items-center gap-2">
+          <div
+            className="flex h-8 w-80 cursor-text items-center rounded-lg border border-stone-200 bg-stone-50 focus-within:border-primary"
+            onMouseDown={e => {
+              if (e.target !== inputRef.current) {
+                e.preventDefault();
+                inputRef.current?.focus();
+              }
+            }}
+          >
+            <div className="flex flex-1 items-center gap-1 overflow-x-auto [scrollbar-width:none] px-2.5">
+              {chips.map((chip, i) => (
+                <span key={i} className="inline-flex shrink-0 items-center gap-1 rounded-full bg-stone-200 px-2 py-0.5 text-xs text-stone-700">
+                  {chip}
+                  <button
+                    type="button"
+                    onMouseDown={e => {
+                      e.preventDefault();
+                      handleRemoveChip(i);
+                    }}
+                    className="text-stone-400 hover:text-stone-600"
+                    aria-label={`移除 ${chip}`}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="size-3">
+                      <path d="M5.28 4.22a.75.75 0 0 0-1.06 1.06L6.94 8l-2.72 2.72a.75.75 0 1 0 1.06 1.06L8 9.06l2.72 2.72a.75.75 0 1 0 1.06-1.06L9.06 8l2.72-2.72a.75.75 0 0 0-1.06-1.06L8 6.94 5.28 4.22Z" />
+                    </svg>
+                  </button>
+                </span>
+              ))}
+              <input
+                ref={inputRef}
+                type="text"
+                value={inputValue}
+                onChange={e => setInputValue(e.target.value)}
+                onKeyDown={handleKeyDown}
+                onFocus={() => setSuggestions(true)}
+                onClick={() => setSuggestions(true)}
+                onBlur={() => setSuggestions(false)}
+                placeholder={chips.length === 0 ? '搜尋相簿...' : ''}
+                className="min-w-[4rem] flex-1 bg-transparent text-sm text-stone-900 outline-none placeholder:text-stone-400"
+              />
+            </div>
+            {(chips.length > 0 || inputValue) && (
+              <button
+                type="button"
+                onMouseDown={e => {
+                  e.preventDefault();
+                  setChips([]);
+                  setInputValue('');
+                  onClearSearch();
+                  inputRef.current?.focus();
+                }}
+                className="shrink-0 pr-2 text-stone-400 hover:text-stone-600"
+                aria-label="清除搜尋"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="size-4">
+                  <path d="M5.28 4.22a.75.75 0 0 0-1.06 1.06L6.94 8l-2.72 2.72a.75.75 0 1 0 1.06 1.06L8 9.06l2.72 2.72a.75.75 0 1 0 1.06-1.06L9.06 8l2.72-2.72a.75.75 0 0 0-1.06-1.06L8 6.94 5.28 4.22Z" />
+                </svg>
+              </button>
+            )}
+          </div>
+          <button
+            type="button"
+            onClick={handleSearchClick}
+            className="rounded-full bg-stone-100 p-1.5 text-stone-500 transition-colors hover:bg-stone-200 hover:text-stone-600 active:bg-stone-300 active:text-stone-700"
+            aria-label="搜尋"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="size-4">
+              <path fillRule="evenodd" d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z" clipRule="evenodd" />
+            </svg>
+          </button>
+        </div>
+        {suggestions && searchHistory.length > 0 && (
+          <ul className="absolute top-full left-0 mt-1 w-80 rounded-lg border border-stone-200 bg-white py-1 shadow-lg">
+            <li className="flex items-center justify-between px-3 py-1">
+              <span className="text-xs text-stone-400">搜尋紀錄</span>
+              <button
+                type="button"
+                onMouseDown={e => {
+                  e.preventDefault();
+                  onClearHistory();
+                  setChips([]);
+                  setInputValue('');
+                  onClearSearch();
+                }}
+                className="text-xs text-stone-400 hover:text-stone-600"
+              >
+                清除紀錄
+              </button>
+            </li>
+            {searchHistory.slice(0, 8).map(term => (
+              <li key={term} className="flex items-center px-3 py-1.5">
                 <button
                   type="button"
-                  onMouseDown={() => handleSuggestionClick(term)}
-                  className="block w-full px-3 py-1.5 text-left text-sm text-stone-700 hover:bg-stone-50"
+                  onMouseDown={e => {
+                    e.preventDefault();
+                    handleSuggestionClick(term);
+                  }}
+                  className="flex flex-1 flex-wrap gap-1 text-left"
                 >
-                  {term}
+                  {term.split(/\s+/).filter(Boolean).map((kw, i) => (
+                    <span key={i} className="inline-flex rounded-full bg-stone-100 px-2 py-0.5 text-xs text-stone-600">
+                      {kw}
+                    </span>
+                  ))}
+                </button>
+                <button
+                  type="button"
+                  onMouseDown={e => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    onRemoveHistoryItem(term);
+                  }}
+                  className="ml-2 text-stone-300 hover:text-stone-500"
+                  aria-label={`刪除搜尋紀錄 ${term}`}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="size-3">
+                    <path d="M5.28 4.22a.75.75 0 0 0-1.06 1.06L6.94 8l-2.72 2.72a.75.75 0 1 0 1.06 1.06L8 9.06l2.72 2.72a.75.75 0 1 0 1.06-1.06L9.06 8l2.72-2.72a.75.75 0 0 0-1.06-1.06L8 6.94 5.28 4.22Z" />
+                  </svg>
                 </button>
               </li>
             ))}

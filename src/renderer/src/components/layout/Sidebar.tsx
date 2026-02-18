@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router';
+import { NavLink, useLocation } from 'react-router';
 import type { PhotoLibrary, Viewed } from '@/types';
 
 export default function Sidebar({
@@ -6,20 +6,17 @@ export default function Sidebar({
   library,
   viewed,
 }: {
-  shelves: { name: string }[];
+  shelves: PhotoLibrary;
   library: PhotoLibrary;
   viewed: Viewed;
 }) {
+  const location = useLocation();
+
   function isFullyViewed(shelfName: string): boolean {
     const shelf = library.find(s => s.name === shelfName);
     if (!shelf || shelf.albums.length === 0) return false;
     const viewedAlbums = viewed[shelfName] ?? [];
     return shelf.albums.every(a => viewedAlbums.includes(a.name));
-  }
-
-  function getAlbumCount(shelfName: string): number {
-    const shelf = library.find(s => s.name === shelfName);
-    return shelf?.albums.length ?? 0;
   }
 
   return (
@@ -37,11 +34,11 @@ export default function Sidebar({
         {shelves.length > 0 && <div className="my-2 border-t border-stone-100" />}
         {shelves.map(shelf => {
           const fullyViewed = isFullyViewed(shelf.name);
-          const count = getAlbumCount(shelf.name);
+          const count = shelf.albums.length;
           return (
             <NavLink
               key={shelf.name}
-              to={`/${encodeURIComponent(shelf.name)}`}
+              to={`/${encodeURIComponent(shelf.name)}${location.search}`}
               className={({ isActive }) =>
                 `flex items-center justify-between rounded px-3 py-1.5 text-sm ${
                   isActive
