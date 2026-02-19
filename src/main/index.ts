@@ -1,6 +1,6 @@
 import { app, shell, BrowserWindow, ipcMain, dialog, net, protocol } from 'electron';
-import { readdir } from 'fs/promises';
-import { join } from 'path';
+import { copyFile, readdir } from 'fs/promises';
+import { basename, join } from 'path';
 import { fileURLToPath, pathToFileURL } from 'url';
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
 import icon from '../../resources/icon.png?asset';
@@ -22,6 +22,20 @@ function createWindow(): void {
 
   mainWindow.on('ready-to-show', () => {
     mainWindow.show();
+  });
+
+  mainWindow.webContents.on('context-menu', async (_event, params) => {
+    if (params.mediaType !== 'image') return;
+    if (!params.srcURL.startsWith('local-file://')) return;
+
+    const filePath = decodeURIComponent(params.srcURL.slice('local-file://'.length));
+    const fileName = basename(filePath);
+    const { canceled, filePath: savePath } = await dialog.showSaveDialog(mainWindow, {
+      defaultPath: join(app.getPath('desktop'), fileName),
+    });
+    if (!canceled && savePath) {
+      await copyFile(filePath, savePath);
+    }
   });
 
   mainWindow.webContents.setWindowOpenHandler(details => {
