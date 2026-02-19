@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { HashRouter, Route, Routes, useLocation, useNavigate } from 'react-router';
+import ScrollToTop from '@/components/layout/ScrollToTop';
 import Sidebar from '@/components/layout/Sidebar';
 import Toolbar from '@/components/layout/Toolbar';
 import useScrollRestore from '@/hooks/useScrollRestore';
@@ -168,6 +169,7 @@ function AppContent() {
             element={<AlbumPage library={sortedLibrary} onView={markViewed} columns={photoColumns} />}
           />
         </Routes>
+        <ScrollToTop />
       </main>
     </div>
   );

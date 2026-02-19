@@ -108,7 +108,7 @@ export default function Toolbar({
 
   return (
     <header className="col-span-full z-10 flex h-16 items-center gap-4 border-b border-stone-200 bg-white px-4">
-      <Link to="/" className="text-xl font-bold text-secondary">
+      <Link to="/" className="mr-2 text-xl font-bold text-secondary">
         aaa v4
       </Link>
       <div className="flex items-center gap-1">
