@@ -39,7 +39,10 @@ Renderer 使用 `@/` alias（→ `src/renderer/src/`）和 `@shared/` alias（�
 - React 元件與 Tailwind 開發細則見 `.claude/skills/frontend/SKILL.md`
 - Commit message：英文
 - 文件：中文（專有名詞保留英文）
-- package.json 不設定 version
+
+## 封裝
+
+目標平台為 **Windows x64**。封裝流程見 `/release` skill。
 
 ## 相關文件
 
