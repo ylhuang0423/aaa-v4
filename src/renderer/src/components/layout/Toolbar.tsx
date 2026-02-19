@@ -115,7 +115,7 @@ export default function Toolbar({
         <button
           type="button"
           onClick={() => navigate(-1)}
-          className="rounded-full bg-stone-100 p-2 text-stone-500 transition-colors hover:bg-stone-200 hover:text-stone-600 active:bg-stone-300 active:text-stone-700"
+          className="rounded-full bg-stone-100 p-1.5 text-stone-500 transition-colors hover:bg-stone-200 hover:text-stone-600 active:bg-stone-300 active:text-stone-700"
           aria-label="上一頁"
         >
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="size-5">
@@ -125,7 +125,7 @@ export default function Toolbar({
         <button
           type="button"
           onClick={() => navigate(1)}
-          className="rounded-full bg-stone-100 p-2 text-stone-500 transition-colors hover:bg-stone-200 hover:text-stone-600 active:bg-stone-300 active:text-stone-700"
+          className="rounded-full bg-stone-100 p-1.5 text-stone-500 transition-colors hover:bg-stone-200 hover:text-stone-600 active:bg-stone-300 active:text-stone-700"
           aria-label="下一頁"
         >
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="size-5">
@@ -136,7 +136,7 @@ export default function Toolbar({
           <button
             type="button"
             onClick={onRefresh}
-            className="rounded-full bg-stone-100 p-2 text-stone-500 transition-colors hover:bg-stone-200 hover:text-stone-600 active:bg-stone-300 active:text-stone-700"
+            className="rounded-full bg-stone-100 p-1.5 text-stone-500 transition-colors hover:bg-stone-200 hover:text-stone-600 active:bg-stone-300 active:text-stone-700"
             aria-label="重新掃描"
           >
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="size-5">
@@ -210,7 +210,7 @@ export default function Toolbar({
           <button
             type="button"
             onClick={handleSearchClick}
-            className="rounded-full bg-stone-100 p-2 text-stone-500 transition-colors hover:bg-stone-200 hover:text-stone-600 active:bg-stone-300 active:text-stone-700"
+            className="rounded-full bg-stone-100 p-1.5 text-stone-500 transition-colors hover:bg-stone-200 hover:text-stone-600 active:bg-stone-300 active:text-stone-700"
             aria-label="搜尋"
           >
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="size-5">

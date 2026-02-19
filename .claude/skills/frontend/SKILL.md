@@ -86,7 +86,7 @@ import { useSomething } from '@/hooks/useSomething';
 | 標題              | `text-xl font-bold text-stone-900`                                                                | 頁面/區塊標題      |
 | 正文              | `text-base`                                                                                      | 導航、內容、按鈕   |
 | 輔助文字          | `text-sm text-stone-500`                                                                          | 計數、時間戳、說明 |
-| Toolbar 圓鈕      | `rounded-full bg-stone-100 p-2 text-stone-500 transition-colors hover:bg-stone-200 hover:text-stone-600 active:bg-stone-300 active:text-stone-700` | Toolbar icon 按鈕  |
+| Toolbar 圓鈕      | `rounded-full bg-stone-100 p-1.5 text-stone-500 transition-colors hover:bg-stone-200 hover:text-stone-600 active:bg-stone-300 active:text-stone-700` | Toolbar icon 按鈕  |
 | Chip badge        | `inline-flex shrink-0 items-center gap-1 rounded-full bg-stone-200 px-2 py-0.5 text-sm text-stone-700` | 搜尋關鍵字標籤     |
 | Keyword highlight | `rounded-sm bg-amber-200 text-inherit`                                                            | 搜尋匹配 highlight |
 
