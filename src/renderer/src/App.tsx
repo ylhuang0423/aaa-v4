@@ -129,7 +129,7 @@ function AppContent() {
   const isShelfRoute = /^\/[^/]+$/.test(location.pathname);
 
   return (
-    <>
+    <div className="grid h-screen grid-cols-[12rem_1fr] grid-rows-[auto_minmax(0,1fr)]">
       <Toolbar
         query={query}
         onSearch={handleSearch}
@@ -147,7 +147,7 @@ function AppContent() {
         onRefresh={photoRoot ? scan : undefined}
       />
       <Sidebar shelves={filteredLibrary} library={sortedLibrary} viewed={viewed} />
-      <main className="mt-16 ml-48 p-8">
+      <main className="overflow-y-auto p-8">
         {loading && (
           <p className="text-base text-stone-500">正在掃描照片資料夾...</p>
         )}
@@ -169,6 +169,6 @@ function AppContent() {
           />
         </Routes>
       </main>
-    </>
+    </div>
   );
 }

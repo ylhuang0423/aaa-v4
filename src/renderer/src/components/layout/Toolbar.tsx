@@ -107,7 +107,7 @@ export default function Toolbar({
   }
 
   return (
-    <header className="fixed inset-x-0 top-0 z-10 flex h-16 items-center gap-4 border-b border-stone-200 bg-white px-4">
+    <header className="col-span-full z-10 flex h-16 items-center gap-4 border-b border-stone-200 bg-white px-4">
       <Link to="/" className="text-xl font-bold text-secondary">
         aaa v4
       </Link>

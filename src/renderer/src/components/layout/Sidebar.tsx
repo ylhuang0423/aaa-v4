@@ -20,7 +20,7 @@ export default function Sidebar({
   }
 
   return (
-    <aside className="fixed top-16 bottom-0 left-0 w-48 overflow-y-auto border-r border-stone-200 bg-white">
+    <aside className="overflow-y-auto border-r border-stone-200 bg-white">
       <nav className="p-3">
         <NavLink
           to="/"
