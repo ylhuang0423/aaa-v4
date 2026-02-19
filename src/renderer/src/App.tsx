@@ -147,9 +147,9 @@ function AppContent() {
         onRefresh={photoRoot ? scan : undefined}
       />
       <Sidebar shelves={filteredLibrary} library={sortedLibrary} viewed={viewed} />
-      <main className="mt-12 ml-48 p-6">
+      <main className="mt-16 ml-48 p-8">
         {loading && (
-          <p className="text-sm text-stone-500">正在掃描照片資料夾...</p>
+          <p className="text-base text-stone-500">正在掃描照片資料夾...</p>
         )}
         <Routes>
           <Route

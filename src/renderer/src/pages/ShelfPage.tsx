@@ -8,7 +8,7 @@ export default function ShelfPage({ library, viewed, columns }: { library: Photo
   const shelfData = library.find(s => s.name === shelf);
 
   if (!shelfData) {
-    return <p className="text-sm text-stone-500">找不到相關內容。</p>;
+    return <p className="text-base text-stone-500">找不到相關內容。</p>;
   }
 
   const viewedSet = new Set(viewed[shelfData.name] ?? []);
@@ -17,14 +17,14 @@ export default function ShelfPage({ library, viewed, columns }: { library: Photo
 
   return (
     <div>
-      <h2 className="text-lg font-bold text-stone-900">{shelfData.name}</h2>
-      <p className="mt-1 text-sm text-stone-500">
+      <h2 className="text-xl font-bold text-stone-900">{shelfData.name}</h2>
+      <p className="mt-1 text-base text-stone-500">
         {shelfData.albums.length} albums
         {viewedSet.size > 0 && <span className="text-stone-400">・{viewedSet.size} viewed</span>}
       </p>
       <div className="mt-4 grid gap-3" style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}>
         {sortedAlbums.length === 0 ? (
-          <p className="text-sm text-stone-400">找不到符合的相簿。</p>
+          <p className="text-base text-stone-400">找不到符合的相簿。</p>
         ) : (
           sortedAlbums.map(album => (
             <AlbumCard

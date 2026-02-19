@@ -30,7 +30,7 @@ export default function AlbumCard({
     >
       <h3
         className={twMerge(
-          'text-sm font-bold transition-colors',
+          'text-base font-bold transition-colors',
           viewed
             ? 'text-teal-600 group-hover:text-teal-700'
             : 'text-stone-500 group-hover:text-stone-600',
@@ -38,7 +38,7 @@ export default function AlbumCard({
       >
         {highlightKeywords(album.name, keywords)}
       </h3>
-      <p className="mt-1 text-xs text-stone-500">{album.photos.length} photos</p>
+      <p className="mt-1 text-sm text-stone-500">{album.photos.length} photos</p>
     </Link>
   );
 }

@@ -21,20 +21,20 @@ export default function AlbumPage({
   }, [shelf, album, onView]);
 
   if (!albumData) {
-    return <p className="text-sm text-stone-500">找不到此相簿。</p>;
+    return <p className="text-base text-stone-500">找不到此相簿。</p>;
   }
 
   return (
     <div>
-      <h2 className="text-lg font-bold text-stone-900">
+      <h2 className="text-xl font-bold text-stone-900">
         <Link to={`/${encodeURIComponent(shelf!)}`} state={{ restoreScroll: true }} className="text-stone-400 hover:text-stone-600">
           {shelf}
         </Link>
         <span className="text-stone-300"> / </span>
         {albumData.name}
       </h2>
-      <p className="mt-1 text-sm text-stone-500">{albumData.photos.length} photos</p>
-      <div className="mt-4">
+      <p className="mt-1 text-base text-stone-500">{albumData.photos.length} photos</p>
+      <div className="mt-6">
         <PhotoGrid photos={albumData.photos} columns={columns} />
       </div>
     </div>

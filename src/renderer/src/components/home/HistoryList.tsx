@@ -17,19 +17,19 @@ function formatRelativeDate(timestamp: number): string {
 export default function HistoryList({ history }: { history: HistoryEntry[] }) {
   return (
     <div className="rounded-xl border border-stone-200 bg-white p-4 shadow-sm">
-      <h3 className="text-lg font-bold text-stone-900">最近瀏覽</h3>
+      <h3 className="text-xl font-bold text-stone-900">最近瀏覽</h3>
       {history.length === 0 ? (
-        <p className="mt-3 text-sm text-stone-400">尚未瀏覽任何相簿。</p>
+        <p className="mt-3 text-base text-stone-400">尚未瀏覽任何相簿。</p>
       ) : (
         <ul className="mt-3 space-y-1">
           {history.map(entry => (
             <li key={`${entry.shelf}-${entry.album}-${entry.timestamp}`}>
               <Link
                 to={`/${encodeURIComponent(entry.shelf)}/${encodeURIComponent(entry.album)}`}
-                className="block rounded px-2 py-1.5 text-sm text-stone-700 hover:bg-stone-50"
+                className="block rounded px-2 py-1.5 text-base text-stone-700 hover:bg-stone-50"
               >
                 <span className="text-stone-400">{entry.shelf} /</span> {entry.album}
-                <span className="ml-2 text-xs text-stone-400">
+                <span className="ml-2 text-sm text-stone-400">
                   {formatRelativeDate(entry.timestamp)}
                 </span>
               </Link>

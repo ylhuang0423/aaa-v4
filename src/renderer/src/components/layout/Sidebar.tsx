@@ -20,13 +20,13 @@ export default function Sidebar({
   }
 
   return (
-    <aside className="fixed top-12 bottom-0 left-0 w-48 overflow-y-auto border-r border-stone-200 bg-white">
-      <nav className="p-2">
+    <aside className="fixed top-16 bottom-0 left-0 w-48 overflow-y-auto border-r border-stone-200 bg-white">
+      <nav className="p-3">
         <NavLink
           to="/"
           end
           className={({ isActive }) =>
-            `block rounded px-3 py-1.5 text-sm ${isActive ? 'bg-stone-100 font-bold text-stone-900' : 'text-stone-600 hover:bg-stone-50'}`
+            `block rounded px-3 py-2 text-base ${isActive ? 'bg-stone-100 font-bold text-stone-900' : 'text-stone-600 hover:bg-stone-50'}`
           }
         >
           Home
@@ -40,7 +40,7 @@ export default function Sidebar({
               key={shelf.name}
               to={`/${encodeURIComponent(shelf.name)}${location.search}`}
               className={({ isActive }) =>
-                `flex items-center justify-between rounded px-3 py-1.5 text-sm ${
+                `flex items-center justify-between rounded px-3 py-2 text-base ${
                   isActive
                     ? 'bg-stone-100 font-bold text-stone-900'
                     : fullyViewed
@@ -50,7 +50,7 @@ export default function Sidebar({
               }
             >
               <span>{shelf.name}</span>
-              {count > 0 && <span className="text-xs text-stone-400">{count}</span>}
+              {count > 0 && <span className="text-sm text-stone-400">{count}</span>}
             </NavLink>
           );
         })}

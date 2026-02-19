@@ -12,7 +12,7 @@ export default function HomePage({
   history: HistoryEntry[];
 }) {
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <DirectoryPicker photoRoot={photoRoot} onSelect={onSelectDirectory} />
       <HistoryList history={history} />
     </div>

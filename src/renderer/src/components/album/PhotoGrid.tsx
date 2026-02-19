@@ -2,7 +2,7 @@ import type { Photo } from '@/types';
 
 export default function PhotoGrid({ photos, columns }: { photos: Photo[]; columns: number }) {
   if (photos.length === 0) {
-    return <p className="text-sm text-stone-400">此相簿沒有照片。</p>;
+    return <p className="text-base text-stone-400">此相簿沒有照片。</p>;
   }
 
   return (
