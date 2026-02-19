@@ -126,6 +126,17 @@ function AppContent() {
     setSearchHistory([]);
   }, [setSearchHistory]);
 
+  const removeHistoryItem = useCallback(
+    (shelf: string, album: string, timestamp: number) => {
+      setHistory(prev => prev.filter(h => !(h.shelf === shelf && h.album === album && h.timestamp === timestamp)));
+    },
+    [setHistory],
+  );
+
+  const clearHistory = useCallback(() => {
+    setHistory([]);
+  }, [setHistory]);
+
   const isAlbumRoute = /^\/[^/]+\/[^/]+$/.test(location.pathname);
   const isShelfRoute = /^\/[^/]+$/.test(location.pathname);
 
@@ -160,6 +171,8 @@ function AppContent() {
                 photoRoot={photoRoot}
                 onSelectDirectory={handleSelectDirectory}
                 history={history}
+                onRemoveHistoryItem={removeHistoryItem}
+                onClearHistory={clearHistory}
               />
             }
           />

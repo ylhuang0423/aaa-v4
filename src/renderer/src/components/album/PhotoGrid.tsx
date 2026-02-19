@@ -5,9 +5,11 @@ export default function PhotoGrid({ photos, columns }: { photos: Photo[]; column
     return <p className="text-base text-stone-400">此相簿沒有照片。</p>;
   }
 
+  const sorted = [...photos].sort((a, b) => a.name.localeCompare(b.name));
+
   return (
     <div className="grid gap-2.5" style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}>
-      {photos.map(photo => (
+      {sorted.map(photo => (
         <img
           key={photo.name}
           src={photo.url}

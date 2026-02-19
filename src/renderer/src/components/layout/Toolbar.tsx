@@ -231,7 +231,7 @@ export default function Toolbar({
                   setInputValue('');
                   onClearSearch();
                 }}
-                className="text-sm text-stone-400 hover:text-stone-600"
+                className="cursor-pointer text-sm text-stone-400 hover:text-stone-600"
               >
                 清除紀錄
               </button>
@@ -244,7 +244,7 @@ export default function Toolbar({
                     e.preventDefault();
                     handleSuggestionClick(term);
                   }}
-                  className="flex flex-1 flex-wrap gap-1 text-left"
+                  className="flex flex-1 cursor-pointer flex-wrap gap-1 text-left"
                 >
                   {term.split(/\s+/).filter(Boolean).map((kw, i) => (
                     <span key={i} className="inline-flex rounded-full bg-stone-100 px-2 py-0.5 text-sm text-stone-600">
@@ -259,10 +259,10 @@ export default function Toolbar({
                     e.stopPropagation();
                     onRemoveHistoryItem(term);
                   }}
-                  className="ml-2 text-stone-300 hover:text-stone-500"
+                  className="ml-2 cursor-pointer text-stone-300 hover:text-stone-500"
                   aria-label={`刪除搜尋紀錄 ${term}`}
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="size-3">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="size-3.5">
                     <path d="M5.28 4.22a.75.75 0 0 0-1.06 1.06L6.94 8l-2.72 2.72a.75.75 0 1 0 1.06 1.06L8 9.06l2.72 2.72a.75.75 0 1 0 1.06-1.06L9.06 8l2.72-2.72a.75.75 0 0 0-1.06-1.06L8 6.94 5.28 4.22Z" />
                   </svg>
                 </button>
