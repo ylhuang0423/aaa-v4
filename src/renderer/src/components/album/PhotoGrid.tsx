@@ -6,7 +6,7 @@ export default function PhotoGrid({ photos, columns }: { photos: Photo[]; column
   }
 
   return (
-    <div style={{ columnCount: columns, columnGap: 10 }}>
+    <div className="grid gap-2.5" style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}>
       {photos.map(photo => (
         <img
           key={photo.name}
