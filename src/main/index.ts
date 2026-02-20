@@ -3,7 +3,7 @@ import { copyFile, readdir, readFile, writeFile } from 'fs/promises';
 import { basename, join } from 'path';
 import { fileURLToPath, pathToFileURL } from 'url';
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
-import icon from '../../resources/icon.png?asset';
+import icon from '../../build/icon.png?asset';
 
 const PHOTO_EXTENSIONS = new Set(['.jpg', '.jpeg', '.png', '.gif']);
 

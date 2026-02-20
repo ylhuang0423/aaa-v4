@@ -7,6 +7,7 @@ description: 封裝 Windows x64 免安裝版並輸出以日期命名的資料夾
 
 - 確認所有變動已 commit（`git status` 乾淨）
 - 確認 typecheck + lint 通過
+- 確認 `build/icon.ico` 存在且與 `build/icon.png` 同步（若不存在或 png 較新，先執行 `/icon` skill 生成）
 
 ## 流程
 
