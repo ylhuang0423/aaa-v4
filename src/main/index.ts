@@ -146,6 +146,9 @@ app.whenReady().then(() => {
     return net.fetch(pathToFileURL(filePath).href);
   });
   electronApp.setAppUserModelId('com.ylhuang.aaa-v4');
+  if (process.platform === 'darwin' && app.dock) {
+    app.dock.setIcon(icon);
+  }
 
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window);
