@@ -33,7 +33,7 @@ export default function AlbumPage({
         <span className="text-stone-300"> / </span>
         {albumData.name}
       </h2>
-      <p className="mt-1 text-base text-stone-500">{albumData.photos.length} photos</p>
+      <p className="mt-1 text-base text-stone-500">{albumData.photos.length} 張照片</p>
       <div className="mt-6">
         <PhotoGrid photos={albumData.photos} columns={columns} />
       </div>

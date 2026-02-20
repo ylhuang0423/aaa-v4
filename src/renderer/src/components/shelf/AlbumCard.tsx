@@ -38,7 +38,7 @@ export default function AlbumCard({
       >
         {highlightKeywords(album.name, keywords)}
       </h3>
-      <p className="mt-1 text-sm text-stone-500">{album.photos.length} photos</p>
+      <p className="mt-1 text-sm text-stone-500">{album.photos.length} 張照片</p>
     </Link>
   );
 }

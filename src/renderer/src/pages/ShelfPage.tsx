@@ -25,8 +25,8 @@ export default function ShelfPage({ library, viewed, columns }: { library: Photo
         <div>
           <h2 className="text-xl font-bold text-stone-900">{shelfData.name}</h2>
           <p className="mt-1 text-base text-stone-500">
-            {shelfData.albums.length} albums
-            {viewedSet.size > 0 && <span className="text-stone-400">・{viewedSet.size} viewed</span>}
+            {shelfData.albums.length} 本相簿
+            {viewedSet.size > 0 && <span className="text-stone-400">・{viewedSet.size} 本已瀏覽</span>}
           </p>
         </div>
         <button
