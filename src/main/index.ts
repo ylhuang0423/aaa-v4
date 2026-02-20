@@ -1,5 +1,5 @@
 import { app, shell, BrowserWindow, ipcMain, dialog, net, protocol } from 'electron';
-import { copyFile, readdir } from 'fs/promises';
+import { copyFile, readdir, readFile, writeFile } from 'fs/promises';
 import { basename, join } from 'path';
 import { fileURLToPath, pathToFileURL } from 'url';
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
@@ -7,10 +7,46 @@ import icon from '../../resources/icon.png?asset';
 
 const PHOTO_EXTENSIONS = new Set(['.jpg', '.jpeg', '.png', '.gif']);
 
-function createWindow(): void {
+interface WindowState {
+  x?: number;
+  y?: number;
+  width: number;
+  height: number;
+  isMaximized: boolean;
+}
+
+const DEFAULT_STATE: WindowState = { width: 900, height: 670, isMaximized: false };
+
+function windowStatePath(): string {
+  return join(app.getPath('userData'), 'window-state.json');
+}
+
+async function loadWindowState(): Promise<WindowState> {
+  try {
+    const data = await readFile(windowStatePath(), 'utf-8');
+    return { ...DEFAULT_STATE, ...JSON.parse(data) };
+  } catch {
+    return DEFAULT_STATE;
+  }
+}
+
+async function saveWindowState(win: BrowserWindow): Promise<void> {
+  const bounds = win.getNormalBounds();
+  const state: WindowState = {
+    x: bounds.x,
+    y: bounds.y,
+    width: bounds.width,
+    height: bounds.height,
+    isMaximized: win.isMaximized(),
+  };
+  await writeFile(windowStatePath(), JSON.stringify(state));
+}
+
+function createWindow(state: WindowState): void {
   const mainWindow = new BrowserWindow({
-    width: 900,
-    height: 670,
+    width: state.width,
+    height: state.height,
+    ...(state.x != null && state.y != null ? { x: state.x, y: state.y } : {}),
     show: false,
     autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : {}),
@@ -20,8 +56,16 @@ function createWindow(): void {
     },
   });
 
+  if (state.isMaximized) {
+    mainWindow.maximize();
+  }
+
   mainWindow.on('ready-to-show', () => {
     mainWindow.show();
+  });
+
+  mainWindow.on('close', () => {
+    saveWindowState(mainWindow);
   });
 
   mainWindow.webContents.on('context-menu', async (_event, params) => {
@@ -108,10 +152,12 @@ app.whenReady().then(() => {
   });
 
   registerIpcHandlers();
-  createWindow();
+  loadWindowState().then(state => {
+    createWindow(state);
 
-  app.on('activate', function () {
-    if (BrowserWindow.getAllWindows().length === 0) createWindow();
+    app.on('activate', function () {
+      if (BrowserWindow.getAllWindows().length === 0) createWindow(state);
+    });
   });
 });
 
